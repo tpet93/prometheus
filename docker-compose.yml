@@ -32,10 +32,10 @@ services:
     networks:
       - back-tier
     restart: always
-   deploy:
-     placement:
-       constraints:
-          - node.role==manager
+    deploy:
+      placement:
+        constraints:
+           - node.role==manager
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -106,8 +106,8 @@ services:
       - front-tier
     restart: always
     deploy:
-     placement:
-       constraints:
+      placement:
+        constraints:
           - node.role==manager
 
 #  pushgateway:
