@@ -36,16 +36,25 @@ services:
         condition: on-failure
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    # build:
+      # context: ./node-exporter
+      # dockerfile: Dockerfile
+    image: tpet93/node-exporter
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-    command: 
-      - '--path.procfs=/host/proc' 
+      - /etc/hostname:/etc/nodename
+      - /mnt/treeseg_pool/workspace/scratch:/mnt/treeseg_pool/workspace/scratch
+      - /mnt/Workspace:/mnt/Workspace
+    command:
+      - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+      - '--collector.textfile.directory=/etc/node-exporter/'
+      - --collector.mountstats
+      - '--no-collector.ipvs'
+    environment:
+      - NODE_ID={{.Node.ID}}
     ports:
       - 9100:9100
     networks:
@@ -109,7 +118,12 @@ services:
           - node.role==manager
       restart_policy:
         condition: on-failure
-
+    # healthcheck:
+      # test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      # interval: 10s
+      # timeout: 5s
+      # retries: 5
+      # start_period: 40s
 #  pushgateway:
 #    image: prom/pushgateway
 #    deploy:
