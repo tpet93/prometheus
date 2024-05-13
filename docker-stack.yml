@@ -50,11 +50,9 @@ services:
     command:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
-      - '--collector.textfile.directory=/etc/node-exporter/'
       - --collector.mountstats
-      - '--no-collector.ipvs'
-    environment:
-      - NODE_ID={{.Node.ID}}
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
       - 9100:9100
     networks:
